@@ -22,6 +22,12 @@ func (g *Group)Run() error {
 		return nil
 	}
 	eg, ctx := errgroup.WithContext(context.Background())
+
+	go func(ctx context.Context) {
+		<- ctx.Done()
+		fmt.Println("xxxxx")
+
+	}(ctx)
 	for _, f :=  range g.fns {
 		fn := f
 		eg.Go(func() error {

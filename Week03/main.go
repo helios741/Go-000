@@ -5,13 +5,54 @@ import (
 	s "Week03/signal"
 	"Week03/workgroup"
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"time"
 )
 
+type Foo struct {
+	X int
+}
 
+type Bar struct {
+	X int
+}
+
+type Baz struct {
+	X int
+}
+
+// ProvideFoo returns a Foo.
+func ProvideFoo() Foo {
+	return Foo{X: 42}
+}
+
+// ProvideBar returns a Bar: a negative Foo.
+func ProvideBar(foo Foo) Bar {
+	return Bar{X: -foo.X}
+}
+
+// ProvideBaz returns a value if Bar is not zero.
+func ProvideBaz(ctx context.Context, bar Bar) (Baz, error) {
+	if bar.X == 0 {
+		return Baz{}, errors.New("cannot provide baz when bar is zero")
+	}
+	return Baz{X: bar.X}, nil
+}
+
+//func initializeBaz(ctx context.Context) (Baz, error) {
+//	var SuperSet = wire.NewSet(ProvideFoo, ProvideBar, ProvideBaz)
+//	wire.Build(SuperSet)
+//	return Baz{}, nil
+//}
+//
+//func main() {
+//	ctx := context.Background()
+//	aa, _ := initializeBaz(ctx)
+//	fmt.Println(aa.X)
+//}
 func main() {
 	var wg workgroup.Group
 
